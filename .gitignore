@@ -1,0 +1,6 @@
+# Runtime artifacts from the build notebooks (rebuilt on each run)
+cache/failures*.json
+cache/build_*.log
+cache/*checkpoint*.json
+cache/build_state.json
+data/interim/boxscores_parts/
