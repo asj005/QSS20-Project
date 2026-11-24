@@ -1,0 +1,10 @@
+variable,n,games,share
+Sportsbook moneyline (all games),1230,1230,1.0
+Polymarket moneyline,1229,1230,0.9992
+Polymarket spread line,1221,1230,0.9927
+Polymarket spread prob,1119,1230,0.9098
+Polymarket total line,1221,1230,0.9927
+Polymarket over prob,1063,1230,0.8642
+Both top scorers trailing form,646,1230,0.5252
+Form-test sample (form + no star DNP),581,1230,0.4724
+Crew foul LOO rate,1230,1230,1.0

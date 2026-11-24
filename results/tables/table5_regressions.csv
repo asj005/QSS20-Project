@@ -1,0 +1,8 @@
+,(1) home_win ~ sb_prob + form_diff,(2) home_win ~ poly_prob + form_diff,(3) home_win ~ sb_prob + surprise_diff,(4) home_win ~ sb_prob
+const (coef),0.1037,0.1087,0.064,0.0832
+sb_prob (coef),0.848,,0.909,0.8834
+form_diff (coef),0.0022,0.0019,,
+poly_prob (coef),,0.8366,,
+surprise_diff (coef),,,0.0081,
+R-squared,0.1294,0.1312,0.1546,0.1285
+n,581.0,580.0,581.0,581.0

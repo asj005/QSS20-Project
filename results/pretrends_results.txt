@@ -1,0 +1,53 @@
+Monthly means by tanking status (main spec):
+                    n  ats_margin  cover_rate       pa       pf
+period   tanking                                               
+Oct      0        135       0.911       0.519  116.193  118.319
+         1         25      -4.920       0.320  124.160  112.680
+Nov      0        364       0.589       0.508  115.558  117.846
+         1         74      -2.899       0.459  121.311  110.054
+Dec      0        329      -0.476       0.492  116.419  117.389
+         1         65       2.408       0.538  118.800  113.892
+Jan      0        386       0.113       0.503  112.544  114.093
+         1         80      -0.544       0.488  116.675  109.200
+Feb-pre  0        151       0.685       0.523  113.517  115.192
+         1         29      -3.569       0.379  120.724  112.000
+Feb-post 0        125       0.892       0.528  112.112  114.464
+         1         27      -4.130       0.370  122.963  112.074
+Mar      0        400       0.098       0.498  114.258  116.132
+         1         78      -0.500       0.513  121.115  111.500
+Apr      0        160       0.119       0.506  116.631  118.575
+         1         32      -0.594       0.469  124.312  114.594
+
+ATS-margin gap (tanking - other) by period:
+period
+Oct        -5.831
+Nov        -3.488
+Dec         2.883
+Jan        -0.656
+Feb-pre    -4.254
+Feb-post   -5.022
+Mar        -0.598
+Apr        -0.712
+
+Points-allowed gap (tanking - other) by period:
+period
+Oct          7.967
+Nov          5.753
+Dec          2.381
+Jan          4.131
+Feb-pre      7.208
+Feb-post    10.851
+Mar          6.858
+Apr          7.681
+
+Pre-trends F-test, ats_margin: F = 2.33, p = 0.055 (null: no differential pre-trend)
+  tanking:C(period)[T.Nov]: 2.343 (t=0.72)
+  tanking:C(period)[T.Dec]: 8.714 (t=2.51)
+  tanking:C(period)[T.Jan]: 5.175 (t=1.63)
+  tanking:C(period)[T.Feb-pre]: 1.577 (t=0.41)
+
+Pre-trends F-test, pa: F = 1.32, p = 0.259 (null: no differential pre-trend)
+  tanking:C(period)[T.Nov]: -2.214 (t=-0.82)
+  tanking:C(period)[T.Dec]: -5.587 (t=-1.90)
+  tanking:C(period)[T.Jan]: -3.836 (t=-1.48)
+  tanking:C(period)[T.Feb-pre]: -0.760 (t=-0.24)

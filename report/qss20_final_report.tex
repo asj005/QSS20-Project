@@ -1,0 +1,657 @@
+% !TEX TS-program = xelatex
+% !BIB TS-program = bibtex
+\documentclass[12pt,letterpaper]{article}
+\usepackage{style/qss20reportstyle} % import dsc180reportstyle.sty
+
+% Grey italic [WRITE] prompts: what each paragraph should say, with the
+% numbers to use. DELETE every [WRITE] block before submitting.
+\newcommand{\writeprompt}[1]{{\color{gray}\textit{[WRITE] #1}}}
+\newcommand{\authnote}[1]{{\color{gray}\textit{[NOTE] #1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Title and Authors
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% New title: the old one ("The Spread Doesn't Tank") overclaims.
+%%% The spread DID is a null in the main spec and insignificant in the
+%%% named-five spec, so the title is now a question, not a claim.
+\title{Tanking and the Spread: Do Betting Markets Price Late-Season Losing?}
+
+\author{Sid Singh \\
+  {\tt siddharth.v.singh.27@dartmouth.edu} \\\And
+  Ahaan Jindal \\
+  {\tt ahaan.s.jindal.27@dartmouth.edu}}
+
+\begin{document}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Abstract and Links
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\vspace{-1cm}
+\begin{center}
+GitHub Code Repository: \url{https://github.com/asj005/QSS20-Project}
+\end{center}
+
+\maketoc
+% \clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Main Contents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Introduction}
+
+Under the NBA's draft lottery system, the teams with the worst records received the best
+odds at the top pick. This therefore creates a strong incentive system that rewards losing
+late in the season (a phenomenon called ``tanking''). The 2025--26 season was an extreme
+case: five teams (Washington, Indiana, Memphis, Brooklyn and Utah) won fewer than 18\%
+of their games after the All-Star break (Associated Press 2026). In May 2026, to avoid this
+issue and preserve the spirit of the game, the league's Board of Governors approved a new
+``3-2-1'' lottery that cuts the odds of the three worst teams, beginning with the 2027 draft
+(Associated Press 2026).
+Betting markets give us a way to measure tanking that does not rely on accusations or
+anecdotes. The point spread and the total line are the market's forecasts of each game's
+margin and combined score. If markets fully anticipated tanking, tanking teams would still
+beat the spread about half the time. Our research questions are:
+1. After the All-Star break, do teams in tanking position underperform the point spread
+and the total line, relative to their own pre-break performance and to other teams?
+2. If so, how is the mispricing produced? Do these teams stop scoring, stop defending,
+or rest their stars?
+3. Does a crowd-driven prediction market (Polymarket) price tanking any better than
+sportsbooks?
+Our method is a difference-in-differences design on market forecast errors, with treatment
+status defined from information available before each game.
+
+\writeprompt{Closing paragraph: preview the answers in one sentence each, then a
+roadmap sentence. The spread answer is a null in the main spec (DID $-0.04$
+points, $t=-0.03$); the totals answer leans toward a miss ($+3.28$ points,
+$t=1.37$, not significant); the mechanism is defense, not scoring or rest
+(points allowed DID $+3.00$, $t=2.16$); Polymarket is no better than the
+sportsbook on tanking games (Brier 0.1190 vs 0.1198 post-break). One sentence
+per section for the roadmap.}
+
+\section{Related Work}
+
+\authnote{This section cost 0.5 points at Checkpoint 2 for bold headers and
+bullet points. Write it as continuous prose: one paragraph per paper or per
+strand, and blend how each paper differs from yours into the description of
+that paper instead of listing differences separately. No bold subheadings, no
+bullets. Reuse the papers from Checkpoint 2; no citations are invented here.}
+
+\writeprompt{Paragraph 1: the tanking literature. What is known about
+tanking as a strategy: lottery incentives, how teams tank (rest, rotations,
+effort), and the league's responses, including the 2019 odds flattening and
+the 2026 ``3-2-1'' reform. Your paper's contribution is measurement: market
+forecast errors instead of accusations.}
+
+\writeprompt{Paragraph 2: sports-betting market efficiency. Whether
+sportsbook lines are efficient and where inefficiencies have been claimed
+(favorite-longshot bias, home bias, late-season effects). Your spread and
+totals DID speak directly to this: a significant post-break deterioration
+for tanking teams would be a documented inefficiency; a null is evidence
+the market adjusted.}
+
+\writeprompt{Paragraph 3: prediction markets vs sportsbooks. What the
+literature finds on whether crowd-driven prices beat bookmaker prices, and
+in which settings. Your RQ3 tests that head-to-head on the same games,
+scored with Brier scores, split by tanking status and by pre/post break.
+End the section with a sentence stating the gap your paper fills.}
+
+\section{Data}
+
+\writeprompt{Paragraph 1: the panel in one paragraph. 1,230 games, the full
+2025--26 NBA regular season, October 21, 2025 to April 12, 2026, 30 teams,
+82 games each, one row per game. Scores, closing moneylines, spreads and
+totals; Polymarket moneyline, spread and totals prices taken as the last
+trade before tip-off; box scores and officials for every game. The NBA Cup
+final (December 16, 2025) is excluded because it does not count in the
+regular-season standings; playoffs and play-in games are not in the sample.
+The All-Star break falls between February 12 and February 19, 2026 (seven
+days with no games); pre-break is 819 games, post-break 411.}
+
+Data sources (hyperlinked):
+\begin{itemize}
+\item Scores, box scores, officials, tip-off times: \url{https://www.basketball-reference.com/leagues/NBA_2026_games.html}
+\item Closing moneylines, spreads, totals: \url{https://www.teamrankings.com/nba/matchup/}
+\item Prediction-market prices: Polymarket Gamma API (\url{https://gamma-api.polymarket.com/events?tag_id=745}, NBA tag 745) and the CLOB price-history endpoint, last price at or before tip-off.
+\end{itemize}
+
+\authnote{Why Polymarket and not Kalshi: Kalshi publishes no public price
+history for event markets, so historical Kalshi odds for the 2025--26 season
+do not exist. Say so in one sentence; it pre-empts the obvious question.}
+
+\writeprompt{Paragraph 2: what each source contributes and how they join.
+Everything joins on date and the two teams; team names match exactly across
+sources. Moneyline coverage is nearly complete (Table 2); spread and totals
+coverage on Polymarket is thinner because those markets sometimes had no
+trade in the 24 hours before tip-off. Implied probabilities are vig-free:
+each moneyline is converted to an implied probability and the two sides are
+normalized to sum to one (average overround 4.50\%).}
+
+\begin{table}[htbp]
+\centering
+\caption{Summary statistics for key variables (1,230 games).}
+\label{tab:summary}
+\begin{tabular}{lrrrr}
+\hline
+Variable & $n$ & Mean & Std.\ dev.\ & Range \\
+\hline
+Home margin (points) & 1,230 & 1.74 & 16.41 & $-$55 to 54 \\
+Actual total (points) & 1,230 & 231.22 & 19.88 & 169 to 302 \\
+Sportsbook total line & 1,230 & 230.73 & 7.67 & 206.5 to 254.5 \\
+Sportsbook implied home-win prob.\ & 1,230 & 0.550 & 0.219 & 0.07 to 0.95 \\
+Polymarket implied home-win prob.\ & 1,229 & 0.552 & 0.225 & 0.05 to 0.98 \\
+Total fouls per game & 1,230 & 39.73 & 6.85 & 14 to 70 \\
+Home win rate & 1,230 & 0.554 & --- & --- \\
+Over rate (actual $>$ line) & 1,230 & 0.491 & --- & --- \\
+Home ATS cover rate & 1,230 & 0.516 & --- & --- \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Coverage: non-missing observations per variable.}
+\label{tab:coverage}
+\begin{tabular}{lrrr}
+\hline
+Variable & $n$ & Games & Share \\
+\hline
+Sportsbook moneyline (all games) & 1,230 & 1,230 & 1.000 \\
+Polymarket moneyline & 1,229 & 1,230 & 0.999 \\
+Polymarket spread line & 1,221 & 1,230 & 0.993 \\
+Polymarket spread prob.\ & 1,119 & 1,230 & 0.910 \\
+Polymarket total line & 1,221 & 1,230 & 0.993 \\
+Polymarket over prob.\ & 1,063 & 1,230 & 0.864 \\
+Both top scorers' trailing form & 646 & 1,230 & 0.525 \\
+Form-test sample (form + no star DNP) & 581 & 1,230 & 0.472 \\
+\hline
+\end{tabular}
+\end{table}
+
+\writeprompt{Paragraph 3: read Tables 1--2 in words. Home teams won 55.4\%
+of games by an average of 1.74 points; 49.1\% of games went over the total
+and home teams covered 51.6\% of spreads, so the lines look roughly right on
+average. The average total line was 230.7 points against an average actual
+total of 231.2. Polymarket moneyline coverage is 1,229 of 1,230 games; the
+one miss is March 1, 2026, San Antonio at New York, which had no trade in
+the 24 hours before tip-off.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/fig6_eda.png}
+\caption{Exploratory data analysis. (a) Home margin centers near zero with
+mean $+1.74$. (b) Actual totals track the sportsbook line. (c) The two
+markets' implied-probability distributions nearly coincide. (d) Total fouls
+per game average 39.7.}
+\label{fig:eda}
+\end{figure}
+
+\writeprompt{Paragraph 4: EDA, before any test (this was a missing piece at
+Checkpoint 2). Walk through Figure 1: the margin distribution, the tight
+relationship between the total line and the actual total, and the
+near-identical implied-probability distributions, which already hints that
+the two markets will score similarly. State the tanking fact that motivates
+the design: the five named teams won 10--17\% of their games after the
+break (Washington 3--26, Indiana 4--23, Memphis 5--24, Brooklyn 5--24, Utah
+4--22), verified from the game data.}
+
+\authnote{Cleaning detail lives in Appendix A, not here. That was a
+0.3-point deduction last time. Do not move it back.}
+
+
+\section{Methodology}
+
+\authnote{This section cost 0.5 points at Checkpoint 2: methods were stated,
+not explained formally, and there was no EDA before the tests. Every measure
+below is defined with its formula, and every regression is written out.
+Describe the method behind each result in prose, not just the result.}
+
+\subsection{Treatment: who is tanking}
+
+\writeprompt{One paragraph, and it matters: get the two definitions straight.
+The MAIN treatment group is the five teams with the worst PRE-BREAK win
+percentage: Sacramento (21.4\%), Washington (26.4\%), New Orleans (26.8\%),
+Indiana (27.3\%), Brooklyn (28.3\%). Treatment is therefore defined from
+information available before each game, as the Introduction promises. The
+five teams the Introduction names (Washington, Indiana, Memphis, Brooklyn,
+Utah) are the ROBUSTNESS group: they are selected on POST-break win
+percentage (all below 18\%), so their selection uses post-break outcomes.
+Memphis (37.7\% pre-break) and Utah (32.1\%) were not bottom-five at the
+break; Sacramento and New Orleans were. Both definitions are reported
+throughout, and the results agree in direction.}
+
+\subsection{Outcomes: market forecast errors}
+
+\writeprompt{One paragraph defining the two forecast errors. Let $s_g$ be the
+home team's spread in game $g$ (negative when the home team is favored) and
+$m_g$ the home margin in points. The home team's ATS (against-the-spread)
+margin is $m_g + s_g$; the away team's is its negative. A team covers when
+its ATS margin is positive (4 of 2,460 team-games push exactly). The total
+forecast error is the actual combined score minus the total line. Both are
+defined so that a positive value means the market UNDER-estimated that side.}
+
+\begin{align}
+\text{ATS margin}_{ig} &= m_g + s_g \quad \text{(home team)} \label{eq:ats} \\
+\text{Total error}_{g} &= \text{actual total}_g - \text{total line}_g \label{eq:toterr}
+\end{align}
+
+\subsection{The difference-in-differences design}
+
+\writeprompt{One paragraph. The unit is the team-game (2,460 rows: two per
+game). The DID compares tanking teams to other teams, after the break to
+before it. The interaction coefficient $\delta$ is the estimate: how much
+worse (or better) tanking teams did against the market after the break,
+relative to their own pre-break performance and to other teams' change over
+the same window. Report the specification with team fixed effects as the
+main one; the tanking main effect is absorbed by the team effects there.}
+
+\begin{equation}
+Y_{it} = \alpha + \beta \cdot \text{Tank}_i + \gamma \cdot \text{Post}_t + \delta \cdot (\text{Tank}_i \times \text{Post}_t) + \varepsilon_{it} \label{eq:did}
+\end{equation}
+\begin{equation}
+Y_{it} = \alpha_i + \gamma \cdot \text{Post}_t + \delta \cdot (\text{Tank}_i \times \text{Post}_t) + \theta \cdot \text{Home}_{it} + \varepsilon_{it} \label{eq:didfe}
+\end{equation}
+
+\writeprompt{One paragraph on standard errors. Each game contributes two
+team-game rows whose ATS margins sum to zero by construction, so standard
+errors are clustered by game (1,230 clusters). The totals regressions are
+run at the game level (1,230 observations) and need no clustering. State
+this explicitly; it is the kind of detail the grader looks for.}
+
+\writeprompt{One paragraph on the identifying assumption. The DID assumes
+tanking and non-tanking teams would have trended together without the break
+(parallel trends). Figure 2 checks it: monthly means for ATS margin and
+points allowed, before and after the break. Report the check honestly. For
+points allowed, the outcome with the significant DID, there is no
+differential pre-trend (joint F-test on the pre-break interactions: F = 1.32,
+p = 0.26). For ATS margin the test is marginal (F = 2.33, p = 0.055),
+driven by December, when tanking teams beat the spread by 2.4 points on 65
+team-games; monthly samples are small (25--80 team-games), so the monthly
+means are noisy, and with four pre-period interactions one t-statistic near
+2.5 is roughly what chance produces. State both results and the December
+caveat rather than hiding the marginal one.}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/tank_fig5_pretrends.png}
+\caption{Monthly means by tanking status (main spec), before and after the
+All-Star break. (a) ATS margin. (b) Points allowed per game. The dashed
+line marks the break.}
+\label{fig:pretrends}
+\end{figure}
+
+\subsection{Mechanisms and the prediction-market comparison}
+
+\writeprompt{One paragraph on mechanisms. The same DID is run with three
+different outcomes: points scored, points allowed, and an indicator for
+whether one of the team's top-three scorers (by season points per game) sat
+out. Scoring, defense, and rest are the three channels the Introduction
+names, and the three DIDs separate them.}
+
+\writeprompt{One paragraph on RQ3. Polymarket and sportsbook moneyline
+prices are scored with the Brier score, split four ways: tanking-team games
+vs other games, pre-break vs post-break. If the crowd prices tanking better,
+its Brier score should be lower on tanking games after the break, relative
+to the sportsbook. The spread lines are also compared directly (mean
+absolute difference 0.25 points, correlation 0.992).}
+
+\begin{equation}
+\text{Brier} = \frac{1}{N} \sum_{i} (p_i - y_i)^2 \label{eq:brier}
+\end{equation}
+
+\section{Results \& Findings}
+
+\subsection{The spread: no tanking blind spot}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/tank_fig1_spread.png}
+\caption{Spread outcomes by tanking status (main spec: worst five pre-break
+win\%) and period. (a) Cover rate. (b) ATS margin in points. Tanking teams
+cover no worse after the break.}
+\label{fig:spread}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Spread DID cells, main spec (worst five by pre-break win\%).}
+\label{tab:spread}
+\begin{tabular}{llrrrr}
+\hline
+& & $n$ & Cover rate & ATS margin & Win rate \\
+\hline
+Other teams & Pre-break & 1,365 & 0.506 & 0.24 & 0.548 \\
+& Post-break & 685 & 0.505 & 0.25 & 0.552 \\
+Tanking teams & Pre-break & 273 & 0.465 & $-$1.20 & 0.260 \\
+& Post-break & 137 & 0.474 & $-$1.24 & 0.241 \\
+\hline
+\end{tabular}
+\end{table}
+
+\writeprompt{Paragraph 1: read Figure 3 and Table 3. Tanking teams covered
+46.5\% pre-break and 47.4\% post-break; other teams covered 50.5\% in both
+periods. The ATS margin for tanking teams is about $-$1.2 points in BOTH
+periods, against $+$0.24 for other teams. The DID estimate is $-0.04$ points
+($t=-0.03$, $p=0.98$) with team fixed effects, and $+0.01$ on the cover
+indicator ($t=0.21$). This is a clean null: the spread did not get worse for
+tanking teams after the break. Note the level effect honestly: tanking teams
+underperform the spread by about 1.2 points all season, in both periods, so
+the market shades them a little light throughout; what does NOT happen is a
+post-break deterioration.}
+
+\writeprompt{Paragraph 2: the named-five robustness check (Appendix Table
+A1). There the direction flips toward the title's story: cover rate 48.5\%
+pre-break to 41.4\% post-break, ATS margin $-0.56$ to $-1.85$, DID $-1.55$
+points ($t=-1.09$, $p=0.27$) and $-0.085$ on the cover indicator ($t=-1.47$,
+$p=0.14$). Report it as suggestive but not significant: with 140 post-break
+team-games, the standard error is about 1.4 points, so the data cannot rule
+out a zero effect. Do not oversell this; the main spec is a zero and the
+robustness spec is a noisy negative.}
+
+\subsection{The totals: a suggestive miss}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/tank_fig2_totals.png}
+\caption{Totals outcomes by whether the game involves a tanking team (main
+spec) and period. (a) Over-hit rate. (b) Total forecast error in points.
+Tanking games go over more after the break.}
+\label{fig:totals}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Totals DID cells, main spec (games involving a tanking team).}
+\label{tab:totals}
+\begin{tabular}{llrrrr}
+\hline
+& & $n$ & Over-hit & Total error & Actual total \\
+\hline
+Other games & Pre-break & 562 & 0.479 & 0.01 & 231.13 \\
+& Post-break & 284 & 0.486 & 0.50 & 230.05 \\
+Tanking games & Pre-break & 257 & 0.483 & $-$0.07 & 231.04 \\
+& Post-break & 127 & 0.575 & 3.70 & 234.55 \\
+\hline
+\end{tabular}
+\end{table}
+
+\writeprompt{One or two paragraphs. Games involving a tanking team went over
+57.5\% of the time after the break, against 48.3\% before it and 48.6\% for
+other games after the break. The total forecast error for tanking games rose
+from $-0.07$ to $+3.70$ points. The DID is $+3.28$ points ($t=1.37$,
+$p=0.17$) and $+0.085$ on the over-hit indicator ($t=1.30$, $p=0.19$). Same
+direction in the named-five spec ($+3.11$ points, $t=1.30$; over-hit
+$+0.106$, $t=1.63$, $p=0.10$). This is the closest thing in the paper to a
+market miss, but it is not significant at conventional levels: say so
+plainly, and point to the mechanism section for why the direction makes
+sense anyway (worse defense means more points).}
+
+\subsection{The mechanism is defense}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/tank_fig3_mechanism.png}
+\caption{Mechanism outcomes by tanking status (main spec) and period. (a)
+Points allowed per game. (b) Share of team-games with a top-three scorer
+sitting out.}
+\label{fig:mechanism}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Mechanism DID cells, main spec (team-game level).}
+\label{tab:mechanism}
+\begin{tabular}{llrrrrr}
+\hline
+& & $n$ & Scored & Allowed & Net & Star DNP \\
+\hline
+Other teams & Pre-break & 1,365 & 116.43 & 114.75 & 1.68 & 0.081 \\
+& Post-break & 685 & 116.40 & 114.42 & 1.98 & 0.114 \\
+Tanking teams & Pre-break & 273 & 111.17 & 119.55 & $-$8.39 & 0.066 \\
+& Post-break & 137 & 112.34 & 122.23 & $-$9.89 & 0.131 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{DID estimates (interaction coefficient, $t$-statistic in
+parentheses). Main spec: worst five by pre-break win\%. Named spec: the
+Introduction's five teams. Standard errors clustered by game in the
+team-game regressions. $^{*}$ $p<0.10$, $^{**}$ $p<0.05$, $^{***}$ $p<0.01$.}
+\label{tab:did}
+\begin{tabular}{lrr}
+\hline
+Outcome & Main spec & Named-five spec \\
+\hline
+ATS margin (points) & $-$0.04 ($-0.03$) & $-$1.55 ($-1.09$) \\
+Cover indicator & 0.01 (0.21) & $-$0.08 ($-1.47$) \\
+Total forecast error (points) & 3.28 (1.37) & 3.11 (1.30) \\
+Over-hit indicator & 0.09 (1.30) & 0.11 (1.63$^{*}$) \\
+Points scored & 1.20 (0.85) & $-$1.08 ($-0.80$) \\
+Points allowed & 3.00 (2.16$^{**}$) & 5.17 (3.66$^{***}$) \\
+Star DNP rate & 0.03 (0.95) & 0.07 (1.72$^{*}$) \\
+\hline
+\end{tabular}
+\end{table}
+
+\writeprompt{Paragraph 1: the three channels, separated. Scoring: the DID is
+$+1.20$ points ($t=0.85$), and in the named spec $-1.08$ ($t=-0.80$):
+tanking teams did NOT stop scoring. Defense: the DID is $+3.00$ points
+allowed ($t=2.16$, $p=0.031$), and $+5.17$ ($t=3.66$, $p<0.001$) in the named
+spec: this is the significant result in the paper, in both definitions.
+Rest: the star DNP rate rose for everyone after the break (other teams 8.1\%
+to 11.4\%), and the tanking-specific increase is $+3.3$ points ($t=0.95$),
+$+6.7$ points ($t=1.72$, $p=0.085$) in the named spec. So the mechanism is
+defense first, rest maybe, scoring no. Their net rating worsened from
+$-8.39$ to $-9.89$ (main spec) and from $-7.12$ to $-12.26$ (named spec).}
+
+\writeprompt{Paragraph 2: tie the mechanism back to the totals result. If
+tanking teams defend worse but score the same, games involving them should
+go over more often, which is exactly the direction of the totals DID. The
+mechanism and the totals result corroborate each other even though the
+totals DID alone is not significant.}
+
+\subsection{Polymarket is no better on tanking games}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figure/tank_fig4_brier.png}
+\caption{Brier scores (lower is better) for Polymarket vs sportsbook
+moneylines, split by whether the game involves a tanking team (main spec)
+and period.}
+\label{fig:brier}
+\end{figure}
+
+\begin{table}[htbp]
+\centering
+\caption{Brier scores, Polymarket vs sportsbook, by tanking status and period (main spec).}
+\label{tab:brier}
+\begin{tabular}{llrrr}
+\hline
+& & $n$ & Polymarket & Sportsbook \\
+\hline
+Tanking games & Pre-break & 257 & 0.1776 & 0.1780 \\
+& Post-break & 127 & 0.1190 & 0.1198 \\
+Other games & Pre-break & 562 & 0.2314 & 0.2309 \\
+& Post-break & 284 & 0.1723 & 0.1730 \\
+\hline
+\end{tabular}
+\end{table}
+
+\writeprompt{One paragraph. The Brier scores are nearly identical in all
+four cells: on tanking games after the break, Polymarket 0.1190 against the
+sportsbook's 0.1198. On the spread, Polymarket's implied home-cover
+probability for post-break tanking games averages 0.497 against an actual
+home-cover rate of 0.527 ($n=110$), and the two markets' spread lines differ
+by 0.25 points on average (correlation 0.992). The crowd does not see
+tanking coming any better than the bookmaker does. Note why Brier scores
+are lower on tanking games in general: heavy underdogs mostly lose as
+expected, so the outcome is easier to predict.}
+
+\section{Discussions \& Interpretations}
+
+\writeprompt{Paragraph 1: what the spread null means. The cleanest reading
+is that the market knew: tanking teams were already underperforming the
+spread by about 1.2 points before the break, and the break changed nothing.
+The spread had already priced in that these teams are bad. That is the
+efficient-market result, and it is the paper's answer to RQ1: no, tanking
+teams do not underperform the spread after the break relative to before it.
+The named-five spec leans the other way but is not significant; report both
+and let the reader see the uncertainty.}
+
+\writeprompt{Paragraph 2: the defense mechanism and the totals suggestion.
+Tanking in 2025--26 looks like not defending, not not scoring and not
+resting stars much more than anyone else. That is consistent with how
+tanking actually works in practice (young players getting minutes, effort
+dropping on the defensive end) and it explains the totals direction. The
+totals market looks like the one place the price may lag the behavior, but
+the evidence is suggestive, not conclusive.}
+
+\writeprompt{Paragraph 3: limitations. One season, so everything is a
+2025--26 statement. The post-break tanking sample is small (127--137
+games), which is why the totals and named-spec spread estimates are noisy.
+The two tanking definitions disagree on Memphis, Utah, Sacramento and New
+Orleans; the results agree in direction, but the treatment definition is a
+judgment call and should be stated as one. Standard errors are clustered by
+game but the design is still observational: the DID assumes tanking and
+non-tanking teams would have trended together without the break (parallel
+trends), and nothing in one season can prove that. The form tests from the
+earlier analysis use 581 games for the coverage reasons in Section 3.}
+
+\section{Conclusions \& Future Work}
+
+\writeprompt{Paragraph 1: the findings in four sentences: the spread null,
+the totals suggestion, the defense mechanism, the Polymarket tie. No new
+numbers here; point back to the tables and figures.}
+
+\writeprompt{Paragraph 2: future work. Three concrete directions. (1) More
+seasons, to check whether the totals miss and the named-spec spread gap are
+real or noise, and whether the 2027 ``3-2-1'' lottery changes tanking
+behavior. (2) Player-level data: minutes and lineups for young players on
+tanking teams after the break, to pin down the defense mechanism. (3)
+In-game prices: whether live markets move fast enough when a tanking team's
+defense collapses mid-game. Each follows from a specific limitation in
+Section 6.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Reference / Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makereference
+\bibliography{reference}
+\bibliographystyle{style/qss20bibstyle}
+
+\authnote{Add to reference.bib: the two Associated Press (2026) pieces from
+Checkpoint 2, plus the data sources. BibTeX entries for the data sources
+are in report/reference\_bib\_additions.bib in the repo. The lottery claim
+is verified: the Board of Governors approved the ``3-2-1'' system on May 28,
+2026, 29--1 (Memphis dissenting), effective for the 2027 draft.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% Optional, comment this part out if not needed
+
+\clearpage
+\makeappendix
+
+\subsection{Named-five robustness tables}
+
+\begin{table}[htbp]
+\centering
+\caption{Spread DID cells, named-five spec (Washington, Indiana, Memphis,
+Brooklyn, Utah).}
+\label{tab:spread-named}
+\begin{tabular}{llrrrr}
+\hline
+& & $n$ & Cover rate & ATS margin & Win rate \\
+\hline
+Other teams & Pre-break & 1,368 & 0.502 & 0.11 & 0.539 \\
+& Post-break & 682 & 0.518 & 0.38 & 0.572 \\
+Tanking teams & Pre-break & 270 & 0.485 & $-$0.56 & 0.304 \\
+& Post-break & 140 & 0.414 & $-$1.85 & 0.150 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Totals DID cells, named-five spec.}
+\label{tab:totals-named}
+\begin{tabular}{llrrrr}
+\hline
+& & $n$ & Over-hit & Total error & Actual total \\
+\hline
+Other games & Pre-break & 566 & 0.474 & $-$0.46 & 230.21 \\
+& Post-break & 281 & 0.473 & 0.05 & 228.94 \\
+Tanking games & Pre-break & 253 & 0.494 & 0.98 & 233.09 \\
+& Post-break & 130 & 0.600 & 4.60 & 236.85 \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Mechanism DID cells, named-five spec (team-game level).}
+\label{tab:mechanism-named}
+\begin{tabular}{llrrrrr}
+\hline
+& & $n$ & Scored & Allowed & Net & Star DNP \\
+\hline
+Other teams & Pre-break & 1,368 & 116.07 & 114.66 & 1.41 & 0.079 \\
+& Post-break & 682 & 116.44 & 113.92 & 2.52 & 0.106 \\
+Tanking teams & Pre-break & 270 & 112.94 & 120.07 & $-$7.12 & 0.078 \\
+& Post-break & 140 & 112.24 & 124.50 & $-$12.26 & 0.171 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Data cleaning and validation}
+
+Cleaning detail lives here, not in the main text. All four sources join on
+date and the two team names, which match exactly across Basketball-Reference,
+TeamRankings, and Polymarket. Tip-off times come from the
+Basketball-Reference schedule pages. Polymarket events come from the Gamma
+API (NBA tag 745); prices come from the CLOB price-history endpoint as the
+last traded price at or before tip-off (median 1.0 hour before tip-off; 1.3\%
+of prices more than 6 hours stale). The Gamma fields \texttt{clobTokenIds}
+and \texttt{outcomes} are JSON-encoded strings and must be parsed before use.
+Player box scores cover 32,166 player-games, including 5,515 DNP rows kept
+with \texttt{mp=`DNP'} and blank stats. A top scorer with no box-score row at
+all (out injured or resting, not even listed) has missing trailing form; that
+is the main reason the form sample is 581 games rather than 1,230. The DNP
+flag fires only when the player has a row marked DNP. Validation: team points
+from the box scores match the scores file in all 1,230 games; player points
+sum to team totals in all 2,460 team-games. Five randomly chosen scores and
+five randomly chosen odds lines were re-checked live against the sources.
+Polymarket and sportsbook implied probabilities correlate at 0.997 with a
+mean absolute difference of 0.012, which cross-validates the two price series
+against each other. Known quirk, kept as listed: February 11, 2026, New York
+at Philadelphia, where TeamRankings' moneyline (Philadelphia $-140$) and
+spread (New York $-2.5$) disagree about the favorite. New York won 138--89.
+
+\subsection{Repository map}
+
+Notebooks 01--04 build the data end to end and reproduce every number in
+this report: 01 odds and scores, 02 box scores, 03 Polymarket prices, 04 the
+merge and all analysis. \texttt{tanking\_analysis.py} runs the DID design in
+Section 4 under both tanking definitions and writes
+\texttt{results/tanking\_results.txt}. \texttt{make\_figures.py} regenerates
+Figures 1--8 and Tables 1--7 from the merged file and asserts the headline
+numbers against \texttt{results/analysis\_results.txt} before writing
+anything; \texttt{make\_tanking\_figures.py} regenerates the tanking
+figures (Figures 3--6) and \texttt{pretrends\_check.py} regenerates the
+pre-trends figure (Figure 2) and writes
+\texttt{results/pretrends\_results.txt}. Raw
+files live in \texttt{data/raw/}, the merged panel in \texttt{outputs/},
+figures in \texttt{figures/}, and tables in \texttt{results/tables/}.
+
+\end{document}

@@ -38,9 +38,19 @@ QSS20-Project/
 │   └── nba_merged_analysis.csv           # merged panel, 1,230 rows x 78 cols
 │
 ├── results/
-│   └── analysis_results.txt              # headline test results
+│   ├── analysis_results.txt              # headline test results
+│   ├── summary_stats.md                  # summary stats + EDA tables
+│   └── tables/                           # Tables 1-7 as CSVs
 │
-├── figures/                              # figures for the presentation
+├── figures/                              # Figures 1-8 for the final report
+│
+├── make_figures.py                       # regenerates figures + tables
+│
+├── report/
+│   ├── QSS20_Final_Report_scaffold.docx  # final-report scaffold (structure,
+│   │                                     # tables, figures, [WRITE] prompts)
+│   └── build_scaffold.py                 # builds the scaffold from figures/
+│                                          # and results/tables/
 │
 ├── cache/
 │   ├── bref/                             # Basketball-Reference schedule pages
@@ -58,7 +68,9 @@ QSS20-Project/
 | `data/interim` | Monthly part files written during a box-score build |
 | `outputs` | The merged game-level panel |
 | `results` | Statistical outputs from the analysis |
-| `figures` | Figures used in the presentation |
+| `results/tables` | Tables 1-7 (summary stats, calibration, regressions) as CSVs |
+| `figures` | Figures 1-8 for the final report |
+| `report` | Final-report scaffold (.docx) + the script that builds it |
 | `notebooks` | The full build + analysis workflow |
 | `cache` | Cached pages and lookup files the builds read |
 
@@ -204,9 +216,10 @@ Secondary questions:
 
 ## Requirements
 
-Python packages used: `pandas`, `numpy`. Everything else is standard library
-(`urllib`, `json`, `csv`, `re`). The three build notebooks need internet
-access; the merge notebook runs offline from `data/raw/`.
+Python packages used: `pandas`, `numpy`, `matplotlib`, `statsmodels`,
+`tabulate` (the last three only for `make_figures.py`). Everything else is
+standard library (`urllib`, `json`, `csv`, `re`). The three build notebooks
+need internet access; the merge notebook runs offline from `data/raw/`.
 
 ## Running the Project
 
@@ -223,6 +236,24 @@ Steps 2 and 3 don't depend on each other, but everything must finish before
 step 4. To reproduce the analysis only, run step 4 — it reads the four files
 in `data/raw/` and writes `outputs/nba_merged_analysis.csv` and
 `results/analysis_results.txt`.
+
+Step 5 is `make_figures.py`: it reads the merged panel, re-checks the
+headline numbers against `results/analysis_results.txt` (Brier scores, form
+correlations, the 581-game form sample), and writes Figures 1–8 to `figures/`
+plus Tables 1–7 to `results/tables/` and `results/summary_stats.md`.
+`report/build_scaffold.py` then assembles those figures and tables into the
+final-report scaffold.
+
+Step 6 is the tanking paper itself: `tanking_analysis.py` runs the
+difference-in-differences design (spread and totals forecast errors, the
+scoring/defense/rest mechanisms, Polymarket vs sportsbook) under two tanking
+definitions — worst five by pre-break win% (main spec) and the five teams
+named in the Introduction (robustness) — with standard errors clustered by
+game, and writes `results/tanking_results.txt` plus `results/tables/tank_*.csv`.
+`make_tanking_figures.py` regenerates Figures 2–5 of the report.
+`report/qss20_final_report.tex` is the Overleaf source; upload it with the
+five PNGs in `figures/` (into a `figure/` folder) and the BibTeX entries in
+`report/reference_bib_additions.bib`.
 
 ## Sources
 

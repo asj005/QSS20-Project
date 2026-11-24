@@ -1,0 +1,129 @@
+Longest gap with no games: 7 days, 2026-02-12 -> 2026-02-19
+Pre-break: games on/before 2026-02-12; post-break: games on/after 2026-02-19
+
+Team-game rows: 2460 (pushes: 4)
+
+Pre-break win% (worst 8):
+                      pre_games  pre_wins  pre_winpct
+team                                                 
+Sacramento Kings             56        12       0.214
+Washington Wizards           53        14       0.264
+New Orleans Pelicans         56        15       0.268
+Indiana Pacers               55        15       0.273
+Brooklyn Nets                53        15       0.283
+Utah Jazz                    56        18       0.321
+Dallas Mavericks             54        19       0.352
+Memphis Grizzlies            53        20       0.377
+
+MAIN tanking set (worst 5 pre-break): ['Sacramento Kings', 'Washington Wizards', 'New Orleans Pelicans', 'Indiana Pacers', 'Brooklyn Nets']
+NAMED tanking set (Introduction's five): ['Washington Wizards', 'Indiana Pacers', 'Memphis Grizzlies', 'Brooklyn Nets', 'Utah Jazz']
+
+Post-break win% for the five named teams (Introduction claims all < 18%):
+                    post_games  post_wins  post_winpct
+team                                                  
+Washington Wizards          29          3        0.103
+Indiana Pacers              27          4        0.148
+Memphis Grizzlies           29          5        0.172
+Brooklyn Nets               29          5        0.172
+Utah Jazz                   26          4        0.154
+Claim verified: True
+Pre-break win% of the named five (Memphis 0.377 and Utah 0.321 were NOT bottom-5 at the break):
+                    pre_games  pre_wins  pre_winpct
+team                                               
+Washington Wizards         53        14       0.264
+Indiana Pacers             55        15       0.273
+Memphis Grizzlies          53        20       0.377
+Brooklyn Nets              53        15       0.283
+Utah Jazz                  56        18       0.321
+
+======================================================================
+MAIN SPEC: worst five by PRE-BREAK win%
+======================================================================
+
+--- RQ1a. SPREAD: cover rate / ATS margin ---
+                 n  cover_rate  ats_margin  ats_margin_se  win_rate
+tanking post                                                       
+0       0     1365      0.5055      0.2403         0.3773    0.5480
+        1      685      0.5051      0.2474         0.5450    0.5518
+1       0      273      0.4652     -1.2015         0.8438    0.2601
+        1      137      0.4745     -1.2372         1.0287    0.2409
+DID, ATS margin (no FE, clustered SE): tanking x post = -0.043 (t=-0.03, p=0.977); tanking = -1.442, post = 0.007, R2 = 0.0015
+DID, ATS margin (team FE + home, clustered SE): tanking x post = -0.060 (t=-0.04, p=0.968); R2 = 0.0170
+DID, cover indicator LPM (team FE + home, clustered SE): tanking x post = 0.0124 (t=0.21, p=0.832)
+
+--- RQ1b. TOTALS: over-hit / total error ---
+                  n  over_hit  total_err  total_err_se  actual_total      line
+tank_game post                                                                
+0         0     562    0.4786     0.0062        0.7705      231.1281  231.1219
+          1     284    0.4859     0.4965        1.0611      230.0528  229.5563
+1         0     257    0.4825    -0.0681        1.1604      231.0428  231.1109
+          1     127    0.5748     3.7047        1.6968      234.5512  230.8465
+DID, total forecast error: tank_game x post = 3.283 (t=1.37, p=0.171)
+DID, over-hit indicator: tank_game x post = 0.0850 (t=1.30, p=0.193)
+
+--- RQ2. MECHANISM: scoring / defense / star rest ---
+                 n       pf       pa  dnp_rate  top_pts    net
+tanking post                                                  
+0       0     1365  116.428  114.750     0.081   28.421  1.678
+        1      685  116.399  114.420     0.114   27.337  1.978
+1       0      273  111.165  119.553     0.066   25.337 -8.388
+        1      137  112.336  122.226     0.131   23.964 -9.891
+DID, points scored: tanking x post = 1.200 (t=0.85, p=0.397)
+DID, points allowed: tanking x post = 3.003 (t=2.16, p=0.031)
+DID, star DNP rate: tanking x post = 0.033 (t=0.95, p=0.344)
+
+--- RQ3. POLYMARKET vs SPORTSBOOK (Brier, moneyline) ---
+tanking-team games, pre-break (n=257): Poly 0.1776 vs SB 0.1780
+tanking-team games, post-break (n=127): Poly 0.1190 vs SB 0.1198
+other games, pre-break (n=562): Poly 0.2314 vs SB 0.2309
+other games, post-break (n=284): Poly 0.1723 vs SB 0.1730
+
+Tanking games post-break with a Poly spread price: n=110
+  Poly implied home-cover prob (mean): 0.497; actual home-cover rate: 0.527
+  Poly spread line vs SB spread line (all games): mean |diff| 0.25 pts, corr 0.992
+
+======================================================================
+ROBUSTNESS: the five NAMED teams (post-break <18%)
+======================================================================
+
+--- RQ1a. SPREAD: cover rate / ATS margin ---
+                 n  cover_rate  ats_margin  ats_margin_se  win_rate
+tanking post                                                       
+0       0     1368      0.5015      0.1111         0.3736    0.5387
+        1      682      0.5176      0.3790         0.5410    0.5718
+1       0      270      0.4852     -0.5630         0.8884    0.3037
+        1      140      0.4143     -1.8464         1.0787    0.1500
+DID, ATS margin (no FE, clustered SE): tanking x post = -1.551 (t=-1.09, p=0.274); tanking = -0.674, post = 0.268, R2 = 0.0014
+DID, ATS margin (team FE + home, clustered SE): tanking x post = -1.556 (t=-1.09, p=0.276); R2 = 0.0174
+DID, cover indicator LPM (team FE + home, clustered SE): tanking x post = -0.0847 (t=-1.47, p=0.141)
+
+--- RQ1b. TOTALS: over-hit / total error ---
+                  n  over_hit  total_err  total_err_se  actual_total      line
+tank_game post                                                                
+0         0     566    0.4735    -0.4647        0.7823      230.2138  230.6784
+          1     281    0.4733     0.0463        1.0712      228.9431  228.8968
+1         0     253    0.4941     0.9842        1.1180      233.0870  232.1028
+          1     130    0.6000     4.6038        1.6445      236.8462  232.2423
+DID, total forecast error: tank_game x post = 3.109 (t=1.30, p=0.193)
+DID, over-hit indicator: tank_game x post = 0.1061 (t=1.63, p=0.103)
+
+--- RQ2. MECHANISM: scoring / defense / star rest ---
+                 n       pf       pa  dnp_rate  top_pts     net
+tanking post                                                   
+0       0     1368  116.065  114.659     0.079   28.368   1.406
+        1      682  116.437  113.919     0.106   27.428   2.518
+1       0      270  112.944  120.067     0.078   25.570  -7.122
+        1      140  112.236  124.500     0.171   23.593 -12.264
+DID, points scored: tanking x post = -1.081 (t=-0.80, p=0.426)
+DID, points allowed: tanking x post = 5.173 (t=3.66, p=0.000)
+DID, star DNP rate: tanking x post = 0.067 (t=1.72, p=0.085)
+
+--- RQ3. POLYMARKET vs SPORTSBOOK (Brier, moneyline) ---
+tanking-team games, pre-break (n=253): Poly 0.1847 vs SB 0.1853
+tanking-team games, post-break (n=130): Poly 0.0932 vs SB 0.0942
+other games, pre-break (n=566): Poly 0.2278 vs SB 0.2273
+other games, post-break (n=281): Poly 0.1849 vs SB 0.1855
+
+Tanking games post-break with a Poly spread price: n=117
+  Poly implied home-cover prob (mean): 0.500; actual home-cover rate: 0.581
+  Poly spread line vs SB spread line (all games): mean |diff| 0.25 pts, corr 0.992
