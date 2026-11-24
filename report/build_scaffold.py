@@ -643,7 +643,7 @@ p("Table 5 in the main text reports coefficients with t-statistics. The "
 h1("Appendix C  Repository map")
 p("Notebooks 01\u201304 build the data end to end and reproduce every "
   "number in this report: 01 odds and scores, 02 box scores, 03 "
-  "Polymarket prices, 04 the merge and all analysis. make_figures.py "
+  "Polymarket prices, 04 the merge and all analysis. nba_analysis_complete.py "
   "regenerates every figure and table from the merged file and asserts "
   "the headline numbers against results/analysis_results.txt before "
   "writing anything. Raw files live in data/raw/, the merged panel in "

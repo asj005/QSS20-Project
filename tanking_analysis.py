@@ -1,4 +1,4 @@
-"""Tanking analysis for the QSS 20 final report ("The Spread Doesn't Tank").
+"""Tanking analysis for the QSS 20 final report ("Tanking and the Spread").
 
 Runs the difference-in-differences design from the paper's Introduction on the
 merged 1,230-game panel (outputs/nba_merged_analysis.csv):
