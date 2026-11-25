@@ -38,8 +38,6 @@ We normalize the two sportsbook moneyline probabilities to remove the bookmaker�
 | `outputs/tankingfigures/` | Figures generated for the tanking analysis |
 | `docs/` | Project report and supporting documents |
 
-## Directory
-
 ```
 QSS20-Project/
 ├─ README.md
