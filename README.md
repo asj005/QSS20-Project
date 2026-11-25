@@ -62,7 +62,20 @@ You can also run the same sequence from a Jupyter notebook at the repository roo
 %run notebooks/Analysis/pretrends_check.py
 ```
 
-Run `tanking_analysis.py` first because `make_tanking_figures.py` reads the tables it generates. To rebuild the merged dataset, run notebooks 01–04 in order using the saved inputs in `data/raw/`.
+Run `tanking_analysis.py` first because `make_tanking_figures.py` reads the tables it generates. 
+
+### Collect the data from scratch
+
+The commands above use the saved merged dataset, so if you'd like to instead collect fresh copies of the source data, open Jupyter from the repository root and run these notebooks in order using **Restart Kernel and Run All**:
+
+| Notebook | What it does |
+| --- | --- |
+| `01_build_odds_scores.ipynb` | Retrieves NBA game results and closing sportsbook odds. |
+| `02_build_boxscores.ipynb` | Retrieves team and player box scores from Basketball-Reference. |
+| `03_build_polymarket.ipynb` | Retrieves NBA market listings and pregame price histories from Polymarket. |
+| `04_merge_and_analyze.ipynb` | Merges the collected files into `data/derived/nba_merged_analysis.csv`. |
+
+We've also added additional dependencies and for settings that reuse saved files or cached responses in their setup cells, for additional reference. Confirm that the merged CSV has **1,230 rows**, and then you can run the three report analysis commands above.
 
 ## Results
 
