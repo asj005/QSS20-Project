@@ -6,9 +6,9 @@ Sid Singh and Ahaan Jindal · Dartmouth College · QSS 20
 
 ## Introduction
 
-The NBA draft lottery gives teams near the bottom of the standings an incentive to finish with a worse record. We ask whether betting markets anticipated changes in those teams’ performance after the All-Star break in the 2025–26 season.
+Between 1990 and 2026, the NBA draft lottery gave teams near the bottom of the standings an incentive to finish with a worse record by giving them higher odds for a top draft pick. However, this incentive to "tank" was highly controversial, and the league revised the system this year to remove the incentive to lose later in the season. We ask whether betting markets anticipated changes in "tanking" teams’ performance after the All-Star break in the 2025–26 season. This analysis is also important to benchmark future results against, to see if the new system has truly removed "tanking" and the team behaviors associated with it. Our analysis is driven by three research questions: 
 
-1. Did teams in potential tanking position perform worse against the spread, and did games involving those teams finish further above the posted total?
+1. Did "tanking" teams perform worse against the spread, and did games involving those teams finish further above the posted total?
 2. Did changes in points scored, points allowed, or recorded star-player absences accompany those patterns?
 3. How did Polymarket and sportsbooks compare at predicting winners in games involving these teams?
 
