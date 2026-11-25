@@ -38,6 +38,9 @@ We normalize the two sportsbook moneyline probabilities to remove the bookmaker�
 | `outputs/tankingfigures/` | Figures generated for the tanking analysis |
 | `docs/` | Project report and supporting documents |
 
+## Directory
+
+```
 QSS20-Project/
 ├─ README.md
 ├─ cache/                          scrape cache from data collection
@@ -79,6 +82,7 @@ QSS20-Project/
 │  ├─ QSS 20 Final Project Presentation Ahaan Sid.pdf
 │  └─ QSS_Project_Checkpoint_2_Singh_Jindal.pdf
 └─ .gitignore
+```
 
 ## How to run
 
