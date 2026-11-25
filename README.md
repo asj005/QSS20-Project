@@ -38,6 +38,48 @@ We normalize the two sportsbook moneyline probabilities to remove the bookmaker�
 | `outputs/tankingfigures/` | Figures generated for the tanking analysis |
 | `docs/` | Project report and supporting documents |
 
+QSS20-Project/
+├─ README.md
+├─ cache/                          scrape cache from data collection
+│  ├─ bref/                        Basketball-Reference schedule pages, Oct–Apr
+│  ├─ bref_games.json
+│  └─ boxscore_urls.json
+├─ data/
+│  ├─ raw/                         odds, scores, box scores, Polymarket prices
+│  │  ├─ nba_2025_26_odds_scores.csv
+│  │  ├─ boxscores_team.csv
+│  │  ├─ boxscores_player.csv
+│  │  └─ polymarket_odds.csv
+│  └─ derived/                     final game-level dataset, built by code
+│     └─ nba_merged_analysis.csv
+├─ notebooks/
+│  ├─ 01_build_odds_scores.ipynb
+│  ├─ 02_build_boxscores.ipynb
+│  ├─ 03_build_polymarket.ipynb
+│  ├─ 04_merge_and_analyze.ipynb
+│  ├─ nba_analysis_complete.py
+│  └─ Analysis/                    report analysis: DID, figures, pre-trends
+│     ├─ tanking_analysis.py
+│     ├─ make_tanking_figures.py
+│     └─ pretrends_check.py
+├─ outputs/
+│  ├─ fig1_calibration.png ... fig8_coverage.png
+│  ├─ summary_stats.md
+│  ├─ tankingfigures/              tanking figures used in the report
+│  │  ├─ tank_fig1_spread.png
+│  │  ├─ tank_fig2_totals.png
+│  │  ├─ tank_fig3_mechanism.png
+│  │  ├─ tank_fig4_brier.png
+│  │  └─ tank_fig5_pretrends.png
+│  └─ tables and texts/            analysis logs and CSV results
+│     ├─ tanking_results.txt
+│     ├─ pretrends_results.txt
+│     └─ tables/                   tank_* cell tables (spread, totals, mechanism)
+├─ docs/
+│  ├─ QSS 20 Final Project Presentation Ahaan Sid.pdf
+│  └─ QSS_Project_Checkpoint_2_Singh_Jindal.pdf
+└─ .gitignore
+
 ## How to run
 
 From the repository root, activate your Python environment and install the analysis dependencies:
